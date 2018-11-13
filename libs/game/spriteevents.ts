@@ -20,11 +20,7 @@ namespace sprites {
     export function onCreated(kind: number, handler: (sprite: Sprite) => void): void {
         if (!handler || kind == undefined) return;
 
-        const scene = game.currentScene();
-        scene.createdHandlers.push({
-            type: kind,
-            handler: handler
-        })
+        game.currentScene().createdHandlers.push(new SpriteHandler(kind, handler));
     }
 
     /**
@@ -39,11 +35,7 @@ namespace sprites {
     export function onDestroyed(kind: number, handler: (sprite: Sprite) => void) {
         if (!handler || kind == undefined) return;
 
-        const scene = game.currentScene();
-        scene.destroyedHandlers.push({
-            type: kind,
-            handler: handler
-        })
+        game.currentScene().destroyedHandlers.push(new SpriteHandler(kind, handler));
     }
 
     /**
@@ -54,14 +46,9 @@ namespace sprites {
     //% blockId=spritesoverlap block="on $sprite of kind $kind=spritetype overlaps $otherSprite of kind $otherKind=spritetype"
     //% help=sprites/on-overlap
     export function onOverlap(kind: number, otherKind: number, handler: (sprite: Sprite, otherSprite: Sprite) => void) {
-        if (kind == undefined || otherKind == undefined ||!handler) return;
+        if (kind === undefined || otherKind === undefined || !handler) return;
 
-        const scene = game.currentScene();
-        scene.overlapHandlers.push({
-            type: kind,
-            otherType: otherKind,
-            handler: handler
-        })
+        game.currentScene().overlapHandlers.push(new OverlapHandler(kind, otherKind, handler));
     }
 }
 
@@ -77,13 +64,8 @@ namespace scene {
     //% blockId=spritesollisions block="on $sprite of kind $kind=spritetype hits wall $tile=colorindexpicker"
     //% help=scene/on-hit-tile
     export function onHitTile(kind: number, tile: number, handler: (sprite: Sprite) => void) {
-        if (kind == undefined || !handler) return;
+        if (kind === undefined || tile === undefined || !handler) return;
 
-        const scene = game.currentScene();
-        scene.collisionHandlers.push({
-            type: kind,
-            tile: tile,
-            handler: handler
-        })
+        game.currentScene().collisionHandlers.push(new CollisionHandler(kind, tile, handler));
     }
 }

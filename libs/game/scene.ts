@@ -7,21 +7,11 @@ namespace scene {
         NeedsSorting = 1 << 1,
     }
 
-    export interface SpriteHandler {
-        type: number;
-        handler: (sprite: Sprite) => void;
-    }
-
-    export interface OverlapHandler {
-        type: number;
-        otherType: number;
-        handler: (sprite: Sprite, otherSprite: Sprite) => void;
-    }
-
-    export interface CollisionHandler {
-        type: number;
-        tile: number;
-        handler: (sprite: Sprite) => void
+    export class CollisionHandler {
+        public constructor(public type: number,
+                            public tile: number,
+                            public handler: (sprite: Sprite) => void) {
+        }
     }
 
     export class Scene {
@@ -34,9 +24,9 @@ namespace scene {
         physicsEngine: PhysicsEngine;
         camera: scene.Camera;
         flags: number;
-        destroyedHandlers: SpriteHandler[];
-        createdHandlers: SpriteHandler[];
-        overlapHandlers: OverlapHandler[];
+        destroyedHandlers: sprites.SpriteHandler[];
+        createdHandlers: sprites.SpriteHandler[];
+        overlapHandlers: sprites.OverlapHandler[];
         collisionHandlers: CollisionHandler[];
 
         constructor(eventContext: control.EventContext) {
@@ -115,6 +105,21 @@ namespace scene {
         addSprite(sprite: SpriteLike) {
             this.allSprites.push(sprite);
             sprite.id = this.spriteNextId++;
+        }
+    }
+}
+
+namespace sprites {
+    export class SpriteHandler {
+        public constructor(public type: number,
+                            public handler: (sprite: Sprite) => void) {
+        }
+    }
+
+    export class OverlapHandler {
+        public constructor(public type: number,
+                            public otherType: number,
+                            public handler: (sprite: Sprite, otherSprite: Sprite) => void) {
         }
     }
 }
