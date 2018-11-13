@@ -60,8 +60,10 @@ namespace info {
                 drawScore();
             }
             // show life
-            if (_life !== null && _visibilityFlag & Visibility.Life) {
-                drawLives();
+            if (_life !== null) {
+                if (_visibilityFlag & Visibility.Life) {
+                    drawLives();
+                }
                 if (_life <= 0) {
                     _life = null;
                     if (_lifeOverHandler) {
@@ -73,8 +75,10 @@ namespace info {
                 }
             }
             // show countdown
-            if (_gameEnd !== undefined && _visibilityFlag & Visibility.Countdown) {
-                drawTimer(_gameEnd - control.millis())
+            if (_gameEnd !== undefined) {
+                if (_visibilityFlag & Visibility.Countdown) {
+                    drawTimer(_gameEnd - control.millis())
+                }
                 let t = Math.max(0, _gameEnd - control.millis()) / 1000;
                 if (t <= 0) {
                     t = 0;
