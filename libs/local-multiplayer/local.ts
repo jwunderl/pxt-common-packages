@@ -22,11 +22,13 @@ namespace controller {
         Menu
     }
 
-    interface ControlledPlayer {
-        p: PlayerNumber;
-        s: Sprite;
-        vx: PlayerNumber;
-        vy: PlayerNumber;
+    class ControlledPlayer {
+        public constructor(public p: PlayerNumber,
+                            public s: Sprite,
+                            public vx: number,
+                            public vy: number) {
+
+        }
     }
 
     let playerSprites: Sprite[];
@@ -120,12 +122,7 @@ namespace controller {
             }
         }
 
-        controlledPlayers.push({
-            p: player,
-            s: playerSprite(player),
-            vx: vx,
-            vy: vy
-        });
+        controlledPlayers.push(new ControlledPlayer(player, playerSprite(player), vx, vy));
     }
 
     /**

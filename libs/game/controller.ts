@@ -1,8 +1,9 @@
 namespace controller {
-    interface ControlledSprite {
-        s: Sprite;
-        vx: number;
-        vy: number;
+    class ControlledSprite {
+        public constructor(public s: Sprite,
+                            public vx: number,
+                            public vy: number) {
+        }
     }
 
     let controlledSprites: ControlledSprite[];
@@ -59,6 +60,6 @@ namespace controller {
                 return;
             }
         }
-        controlledSprites.push({ s: sprite, vx: vx, vy: vy });
+        controlledSprites.push(new ControlledSprite(sprite, vx, vy));
     }
 }
