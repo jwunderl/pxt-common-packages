@@ -1,8 +1,15 @@
 namespace controller {
     class ControlledSprite {
-        public constructor(public s: Sprite,
-                            public vx: number,
-                            public vy: number) {
+        public s: Sprite;
+        public vx: number;
+        public vy: number
+        
+        public constructor(s: Sprite,
+                            vx: number,
+                            vy: number) {
+            this.s = s;
+            this.vx = vx;
+            this.vy = vy;
         }
     }
 

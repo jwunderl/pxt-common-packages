@@ -23,11 +23,16 @@ namespace controller {
     }
 
     class ControlledPlayer {
-        public constructor(public p: PlayerNumber,
-                            public s: Sprite,
-                            public vx: number,
-                            public vy: number) {
-
+        public p: PlayerNumber;
+        public s: Sprite;
+        public vx: number;
+        public vy: number;
+        
+        public constructor(p: PlayerNumber, s: Sprite, vx: number, vy: number) {
+            this.p = p;
+            this.s = s;
+            this.vx = vx;
+            this.vy = vy;
         }
     }
 

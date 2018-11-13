@@ -8,9 +8,14 @@ namespace scene {
     }
 
     export class CollisionHandler {
-        public constructor(public type: number,
-                            public tile: number,
-                            public handler: (sprite: Sprite) => void) {
+        public type: number;
+        public tile: number;
+        public handler: (sprite: Sprite) => void;
+
+        public constructor(type: number, tile: number, handler: (sprite: Sprite) => void) {
+            this.type = type;
+            this.tile = tile;
+            this.handler = handler;
         }
     }
 
@@ -111,15 +116,24 @@ namespace scene {
 
 namespace sprites {
     export class SpriteHandler {
-        public constructor(public type: number,
-                            public handler: (sprite: Sprite) => void) {
+        public type: number;
+        public handler: (sprite: Sprite) => void;
+        
+        public constructor(type: number, handler: (sprite: Sprite) => void) {
+            this.type = type;
+            this.handler = handler;
         }
     }
 
     export class OverlapHandler {
-        public constructor(public type: number,
-                            public otherType: number,
-                            public handler: (sprite: Sprite, otherSprite: Sprite) => void) {
+        public type: number;
+        public otherType: number;
+        public handler: (sprite: Sprite, otherSprite: Sprite) => void;
+
+        public constructor(type: number, otherType: number, handler: (sprite: Sprite, otherSprite: Sprite) => void) {
+            this.type = type;
+            this.otherType = otherType;
+            this.handler = handler;
         }
     }
 }
