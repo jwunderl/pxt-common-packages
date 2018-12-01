@@ -1,0 +1,11 @@
+{
+    "name": "songs",
+    "description": "Songs",
+    "files": [
+        "songs.ts"
+    ],
+    "dependencies": {
+        "core": "file:../mixer"
+    },
+    "public": true
+}
