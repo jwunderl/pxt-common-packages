@@ -56,7 +56,7 @@ namespace music {
          * @param song the song to play
          */
         //% weight=100 blockGap=8 group="Songs"
-        //% blockId="songs_play" block="play song %song"
+        //% blockId="songs_play" block="play song $this"
         play() {
             if (!this.isPlaying()) this.tracks.forEach(t => t.play());
         }
@@ -75,7 +75,7 @@ namespace music {
          * @param song the song to play
          */
         //% weight=95 blockGap=8 group="Songs"
-        //% blockId="songs_loop" block="play song %song in a loop"
+        //% blockId="songs_loop" block="play song $this in a loop"
         loop() {
             if (this.isPlaying()) return;
             this.looping = true;
@@ -93,7 +93,7 @@ namespace music {
          * @param song the song to end
          */
         //% weight=90 blockGap=8 group="Songs"
-        //% blockId="songs_stop" block="stop playing song %song"
+        //% blockId="songs_stop" block="stop playing song $this"
         stop() {
             this.looping = false;
             this.tracks.forEach(t => t.stop());
@@ -140,7 +140,9 @@ namespace music {
          * Set the default output volume of the song
          * @param volume the volume between 0 and 256, eg: 128
          */
-        set volume(vol: number) {
+        //% weight=85 blockGap=8 group="Songs"
+        //% blockId="songs_volume" block="set song $this volume to $vol"
+        volume(vol: number) {
             this.tracks.forEach(t => t.volume = vol);
         }
 
