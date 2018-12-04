@@ -67,7 +67,7 @@ namespace music {
          */
         playTrack(index: number) {
             const t = this.tracks[index];
-            if (t && !this.isPlaying()) t.play();
+            if (t && !t.running) t.play();
         }
 
         /**
