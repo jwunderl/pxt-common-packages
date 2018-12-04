@@ -142,7 +142,7 @@ namespace music {
          */
         //% weight=85 blockGap=8 group="Songs"
         //% blockId="songs_volume" block="set song $this volume to $vol"
-        volume(vol: number) {
+        setVolume(vol: number) {
             this.tracks.forEach(t => t.volume = vol);
         }
 
