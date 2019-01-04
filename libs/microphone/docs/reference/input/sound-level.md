@@ -1,6 +1,6 @@
 # sound Level
 
-Find out what the the level of sounds are.
+Find out what the level of sounds are.
 
 ```sig
 input.soundLevel()

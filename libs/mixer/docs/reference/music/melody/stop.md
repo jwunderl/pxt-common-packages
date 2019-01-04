@@ -22,7 +22,7 @@ To understand how melodies are created for use in arcade, take a look at the dev
 
 ## Example #example
 
-Loop the the ``power up`` melody. Wait for 5 seconds and then stop it.
+Loop the ``power up`` melody. Wait for 5 seconds and then stop it.
 
 ```blocks
 music.powerUp.loop()

@@ -13,7 +13,7 @@ music.setSpeakerVolume(128)
 
 ## Parameters
 
-* ``volume``: the volume of of the sounds played on the speaker. The volume [number](/reference/types) can be
+* ``volume``: the volume of the sounds played on the speaker. The volume [number](/reference/types) can be
 between `0` for silent and `255` for the loudest sound.
 
 ## Example #example

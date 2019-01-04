@@ -32,7 +32,7 @@ music.playSound(music.sounds(Sounds.JumpUp))
 
 ### My sound string #ex1
 
-Make a sound string that has 5 notes. Play the sound string and and finish the program.
+Make a sound string that has 5 notes. Play the sound string and finish the program.
 
 ```blocks
 let mySound = "g5:1 f e d c";

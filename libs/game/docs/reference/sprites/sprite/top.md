@@ -79,7 +79,7 @@ forever(function () {
 
 ### Stay in bounds #ex2
 
-Send a sprite moving from the left side of the screen to the top. In an ``||game:on game update||`` loop, check to see if the the sprite touched the top side of the screen. If so, reset the sprite back to the left side of the screen.
+Send a sprite moving from the left side of the screen to the top. In an ``||game:on game update||`` loop, check to see if the sprite touched the top side of the screen. If so, reset the sprite back to the left side of the screen.
 
 ```blocks
 enum SpriteKind {

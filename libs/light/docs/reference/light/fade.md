@@ -21,7 +21,7 @@ the shade that you want the color faded to.
 
 ## Example
 
-Fade the `green` light of the the pixels to half brightness when the `A` button is pressed.
+Fade the `green` light of the pixels to half brightness when the `A` button is pressed.
 The number `128` is just about one-half of full brightness (255).
 
 ```blocks

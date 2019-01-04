@@ -6,7 +6,7 @@ See if the sprite has contacted a wall tile or not.
 sprites.create(null).isHittingTile(CollisionDirection.Left)
 ```
 
-The function checks if the sprite is currently touching a wall tile on on of it's four sides. If the sprite is contacting the wall tile, then `true` is returned.
+The function checks if the sprite is currently touching a wall tile on one of it's four sides. If the sprite is contacting the wall tile, then `true` is returned.
 
 The sprite must be in motion (a velocity of ``vx`` or ``vy`` that isn't `0`) before the checking for a tile hit. Otherwise, `false` is returned even though the sprite is touching the wall tile.
 

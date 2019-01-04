@@ -10,7 +10,7 @@ You can get the background color of the screen anytime. The background color is 
 
 ## Returns
 
-* a [number](/types/number) which is the the color set as the screen background color.
+* a [number](/types/number) which is the color set as the screen background color.
 
 ## Example #example
 
