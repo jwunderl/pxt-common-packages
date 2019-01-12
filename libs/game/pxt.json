@@ -27,8 +27,6 @@
         "targetoverrides.cpp",
         "targetoverrides.ts",
         "mathUtil.ts",
-        "menu.ts",
-        "systemmenu.ts",
         "fixed.ts",
         "console.ts",
         "fieldeditors.ts",

@@ -34,7 +34,9 @@ namespace game.consoleOverlay {
     }
 
     export function draw() {
-        if (!consoleStrings || scene.systemMenu.active) return;
+        // todo figure out if 'scene.systemMenu.active' necessary, or just disable and then reenable? 
+        // if (!consoleStrings || scene.systemMenu.active) return;
+        if (!consoleStrings) return;
         const height = consoleFont.charHeight + marginy ;
         const top = 2 + (game.stats ? height : 0);
         for (let i = 0; i < consoleStrings.length; ++i) {

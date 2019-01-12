@@ -1,0 +1,20 @@
+{
+    "name": "menu",
+    "description": "Menu library",
+    "files": [
+        "animation.ts",
+        "component.ts",
+        "container.ts",
+        "frame.ts",
+        "justifiedcontent.ts",
+        "menu.ts",
+        "node.ts",
+        "nodes.ts",
+        "state.ts",
+        "systemmenu.ts"
+    ],
+    "public": true,
+    "dependencies": {
+        "screen": "file:../game"
+    }
+}

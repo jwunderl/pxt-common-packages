@@ -6,6 +6,20 @@ namespace scene {
         NeedsSorting = 1 << 1,
     }
 
+    let newSceneHandlers: NewSceneHandler[];
+    export interface NewSceneHandler {
+        handler: (scene: Scene) => void;
+    }
+
+    export function registerNewSceneHandler(handler: (scene: Scene) => void) {
+        if (!newSceneHandlers)
+            newSceneHandlers = [];
+
+        newSceneHandlers.push({
+            handler: handler
+        });
+    }
+
     export interface SpriteHandler {
         kind: number;
         handler: (sprite: Sprite) => void;
@@ -25,7 +39,6 @@ namespace scene {
 
     export class Scene {
         eventContext: control.EventContext;
-        menuState: menu.State;
         background: Background;
         tileMap: tiles.TileMap;
         allSprites: SpriteLike[];
@@ -54,6 +67,8 @@ namespace scene {
             this.spritesByKind = [];
             this._data = {};
             this._millis = 0;
+            if (newSceneHandlers)
+                newSceneHandlers.forEach(h => h.handler(this));
         }
 
         init() {
@@ -121,7 +136,7 @@ namespace scene {
             // update screen
             this.eventContext.registerFrameHandler(200, control.__screen.update);
             // register start menu
-            scene.systemMenu.register();
+            // scene.systemMenu.register();
         }
 
         get data() {
@@ -142,7 +157,6 @@ namespace scene {
 
         destroy() {
             this.eventContext = undefined;
-            this.menuState = undefined;
             this.background = undefined;
             this.tileMap = undefined;
             this.allSprites = undefined;
