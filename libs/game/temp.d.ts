@@ -14,6 +14,10 @@ declare interface Array<T> {
     sort(cb: (a: T, b: T) => number): Array<T>;
     shift(): T;
     some(cb: (a: T) => boolean): boolean;
+    every(cb: (a: T) => boolean): boolean;
+    concat(arr: T[]): Array<T>;
+    slice(a: number, b: number): Array<T>;
+    splice(a: number, b: number): void;
 }
 
 declare interface String {

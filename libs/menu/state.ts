@@ -15,16 +15,17 @@ namespace menu.state {
             game.onUpdate(() => {
                 let time = control.millis();
                 const delta = time - lastTime;
-                this.updatingNodes.forEach(n => { 
-                    if (n) {
-                        n.update(delta)
-                    } else {
-                        // todo: At some point, this.updatingNodes contains undefined. debug why
-                        // ?? Potentially error with Array.removeElement or gc ?? particles also have the issue
-                        // where at no point the value undefined seems to be added, but it occasionally does
-                        console.log("DEBUG ME" + this.updatingNodes.length);
-                    }
-                });
+
+                /**
+                 * as any member of this.updatingNodes could implement n.update such that it
+                 * changes the subscribed elements (i.e. unsubscribes itself / subscribes something else),
+                 * a clone needs to be made to guarantee the foreach
+                 *    * doesn't miss an element's update
+                 *    * doesn't attempt to update an index that no longer contains an element
+                 */
+                this.updatingNodes
+                    .slice(0, this.updatingNodes.length)
+                    .forEach((n) => n.update(delta));
                 lastTime = time;
             })
 
@@ -70,6 +71,19 @@ namespace menu.state {
         }
     }
 
+    export function subscribe(node: menu.animation.Updater) {
+        const state = getMenuState();
+        if (!state) return;
+        
+        state.updatingNodes.push(node);
+    }
+
+    export function unsubscribe(node: menu.animation.Updater) {
+        const state = getMenuState();
+        if (!state) return;
+        state.updatingNodes.removeElement(node);
+    }
+
     export function disposeComponent(c: menu.Component) {
         const state = getMenuState();
         if (!state) return;
@@ -80,25 +94,6 @@ namespace menu.state {
             menu.state.popFocus();
         }
         state.focusStack.removeElement(c);
-    }
-
-    export function subscribe(node: menu.animation.Updater) {
-        const state = getMenuState();
-        if (!state) return;
-
-        // debugging issue above? never triggers true...
-        // if (state.updatingNodes.some(a => a == undefined)) console.log("c")
-        state.updatingNodes.push(node);
-        // if (state.updatingNodes.some(a => a == undefined)) console.log("d")
-    }
-
-    export function unsubscribe(node: menu.animation.Updater) {
-        const state = getMenuState();
-        if (!state) return;
-        // debugging issue above? never triggers true...
-        // if (state.updatingNodes.some(a => a == undefined)) console.log("a")
-        state.updatingNodes.removeElement(node);
-        // if (state.updatingNodes.some(a => a == undefined)) console.log("b")
     }
 
     /**
