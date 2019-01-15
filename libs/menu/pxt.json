@@ -3,15 +3,21 @@
     "description": "Menu library",
     "files": [
         "animation.ts",
+        "boundingbox.ts",
+        "bounds.ts",
         "component.ts",
         "container.ts",
         "frame.ts",
         "justifiedcontent.ts",
+        "listitem.ts",
         "menu.ts",
         "node.ts",
-        "nodes.ts",
+        "rectnode.ts",
+        "roundedframe.ts",
         "state.ts",
-        "systemmenu.ts"
+        "systemmenu.ts",
+        "textnode.ts",
+        "verticallist.ts"
     ],
     "public": true,
     "dependencies": {
