@@ -1,28 +1,21 @@
-enum Alignment {
-    Left,
-    Top = Left,
-    Center,
-    Right,
-    Bottom = Right
-}
-
-enum ButtonId {
-    A,
-    B,
-    Up,
-    Right,
-    Down,
-    Left
-}
-
 namespace menu {
+    export enum ButtonId {
+        A,
+        B,
+        Up,
+        Right,
+        Down,
+        Left,
+        Menu
+    }
+
     export let consolePriority = ConsolePriority.Debug;
     export function log(msg: string) {
         console.add(consolePriority, `menu> ${msg}`);
     }
 
     export class Menu extends Component {
-        list: menu.VerticalList;
+        list: menu.node.VerticalList;
         root: menu.JustifiedContent;
         b: menu.node.Bounds;
         margin: number;
@@ -42,7 +35,7 @@ namespace menu {
             this.b.top = 30;
             this.b.appendChild(f)
 
-            this.list = new menu.VerticalList(finalWidth - 8, finalHeight - 8, font || image.font5, finalWidth - 24, finalHeight - 24);
+            this.list = new menu.node.VerticalList(finalWidth - 8, finalHeight - 8, font || image.font5, finalWidth - 24, finalHeight - 24);
             f.appendChild(this.list);
             this.root = new menu.JustifiedContent(this.b, Alignment.Center, Alignment.Center);
             this.appendChild(this.root);
@@ -79,7 +72,7 @@ namespace menu {
             this.list.hide();
             const hori = this.b.animate(menu.setWidth)
                 .from(150)
-                .to(0)
+                .to(this.margin)
                 .duration(200)
             const vert = this.b.animate(menu.setHeight)
                 .from(100)
@@ -106,8 +99,9 @@ namespace menu {
 
         handleInput(button: number) {
             log(`input menu ${button}`)
-            if (button == ButtonId.B)
+            if (button == menu.ButtonId.B || button == menu.ButtonId.Menu) {
                 this.hide();
+            }
             return true;
         }
     }

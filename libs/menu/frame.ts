@@ -57,7 +57,7 @@ namespace menu.node {
         }
 
         draw(canvas: Image, bb: menu.BoundingBox, innerFill: number) {
-            const cl = bb.originX
+            const cl = bb.originX;
             const ct = bb.originY;
             const cr = bb.originX + bb.width - this.rw;
             const cb = bb.originY + bb.height - this.bh;
@@ -65,18 +65,22 @@ namespace menu.node {
             const sr = this.source.width - this.rw;
             const sb = this.source.height - this.bh;
 
+            // render top left
             this.drawPartial(canvas, cl, ct, 0, 0, this.lw, this.th);
+            // render top right
             this.drawPartial(canvas, cr, ct, sr, 0, this.rw, this.th);
+            // render bottom right
             this.drawPartial(canvas, cr, cb, sr, sb, this.rw, this.bh);
+            // render bottom left
             this.drawPartial(canvas, cl, cb, 0, sb, this.lw, this.bh);
 
             const innerWidth = bb.width - this.rw - this.lw;
-            this.drawHorizontal(canvas, cl + this.lw, ct, innerWidth, true);
-            this.drawHorizontal(canvas, cl + this.lw, cb, innerWidth, false);
+            this.drawHorizontal(canvas, cl + this.lw, ct, innerWidth, true); // top
+            this.drawHorizontal(canvas, cl + this.lw, cb, innerWidth, false); // bottom
 
             const innerHeight = bb.height - this.bh - this.th;
-            this.drawVertical(canvas, cl, ct + this.th, innerHeight, true);
-            this.drawVertical(canvas, cr, ct + this.th, innerHeight, false);
+            this.drawVertical(canvas, cl, ct + this.th, innerHeight, true); // left
+            this.drawVertical(canvas, cr, ct + this.th, innerHeight, false); // right
 
             canvas.fillRect(cl + this.lw, ct + this.th, innerWidth, innerHeight, innerFill);
         }

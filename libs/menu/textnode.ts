@@ -30,7 +30,7 @@ namespace menu.node {
                 this._bounds.originX | 0,
                 this._bounds.originY | 0,
                 this.color,
-                this.font)
+                this.font);
         }
     }
 }

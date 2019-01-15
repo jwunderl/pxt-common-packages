@@ -1,3 +1,11 @@
+enum Alignment {
+    Left,
+    Top = Left,
+    Center,
+    Right,
+    Bottom = Right
+}
+
 namespace menu {
     /**
      * A Node that justifies its children Node within its bounds. Should

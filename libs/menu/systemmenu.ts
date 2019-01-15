@@ -7,8 +7,12 @@ namespace scene.systemMenu {
         repeat?: boolean;
         hiddenHandler?: () => void;
     }
+
     let customItems: MenuItem[] = undefined;
-    export function addEntry(name: () => string, clickHandler: () => void, repeat?: boolean, hiddenHandler?: () => void) {
+    export function addEntry(name: () => string,
+                            clickHandler: () => void,
+                            repeat?: boolean,
+                            hiddenHandler?: () => void) {
         if (!customItems) customItems = [];
         customItems.push({
             name: name,
@@ -29,41 +33,48 @@ namespace scene.systemMenu {
         let itemHandler: () => void = undefined;
         let onHidden: () => void = undefined;
         const m = new menu.Menu();
+
         m.addItem(game.stats ? "hide stats" : "show stats", () => {
             game.stats = !game.stats;
             m.hide();
-        })
+        });
+
         m.addItem(game.consoleOverlay.isVisible() ? "hide console" : "show console", () => {
-            if (game.consoleOverlay.isVisible())
+            if (game.consoleOverlay.isVisible()) {
                 game.consoleOverlay.setVisible(false);
-            else {
+            } else {
                 game.consoleOverlay.setVisible(true);
                 console.log("console");
             }
             m.hide();
         });
+
         m.addItem("volume up", () => {
             const v = music.volume();
             music.setVolume(v + 32);
             music.playTone(440, 500);
         });
+
         m.addItem("volume down", () => {
             const v = music.volume();
             music.setVolume(v - 32);
             music.playTone(440, 500);
         });
 
-        if (customItems)
+        if (customItems) {
             customItems.forEach(item => {
                 m.addItem(item.name(), () => {
-                    if (item.repeat) item.clickHandler();
-                    else {
+                    if (item.repeat) {
+                        item.clickHandler();
+                    } else {
                         itemHandler = item.clickHandler;
                         onHidden = item.hiddenHandler;
                         m.hide();
                     }
-                })
+                });
             });
+        }
+
         m.onDidHide = () => {
             active = false;
             if (onHidden)
@@ -71,6 +82,7 @@ namespace scene.systemMenu {
             if (itemHandler)
                 itemHandler();
         }
+
         m.show();
     }
 }

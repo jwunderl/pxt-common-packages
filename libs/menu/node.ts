@@ -156,6 +156,7 @@ namespace menu {
             if (state.root == this) {
                 game.popScene();
             }
+
             this.children.forEach(c => c.dispose());
             this.children = undefined;
         }

@@ -1,7 +1,7 @@
-namespace menu {
+namespace menu.node {
     export class ListItem extends Component {
         content: JustifiedContent;
-        label: menu.container.ScrollingLabel;
+        label: menu.node.ScrollingLabel;
         background: menu.node.RectNode;
         id: number;
         handler: () => void;
@@ -12,7 +12,7 @@ namespace menu {
             this.background = new menu.node.RectNode(0);
             this.appendChild(this.background);
 
-            this.label = new menu.container.ScrollingLabel(labelWidth, font, text);
+            this.label = new menu.node.ScrollingLabel(labelWidth, font, text);
             this.appendChild(new JustifiedContent(this.label, Alignment.Left, Alignment.Center));
 
             this.id = id;

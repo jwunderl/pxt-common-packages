@@ -17,11 +17,8 @@ namespace menu.state {
                 const delta = time - lastTime;
 
                 /**
-                 * as any member of this.updatingNodes could implement n.update such that it
-                 * changes the subscribed elements (i.e. unsubscribes itself / subscribes something else),
-                 * a clone needs to be made to guarantee the foreach
-                 *    * doesn't miss an element's update
-                 *    * doesn't attempt to update an index that no longer contains an element
+                 * need to duplicate list maintain state when update method subscribes or
+                 * unsubscribes a node
                  */
                 this.updatingNodes
                     .slice(0, this.updatingNodes.length)
@@ -33,12 +30,13 @@ namespace menu.state {
                 this.root.draw(screen, new menu.BoundingBox(0, 0, screen.width, screen.height));
             });
 
-            controller.A.onEvent(ControllerButtonEvent.Pressed, inputHandler(ButtonId.A))
-            controller.B.onEvent(ControllerButtonEvent.Pressed, inputHandler(ButtonId.B))
-            controller.up.onEvent(ControllerButtonEvent.Pressed, inputHandler(ButtonId.Up))
-            controller.right.onEvent(ControllerButtonEvent.Pressed, inputHandler(ButtonId.Right))
-            controller.down.onEvent(ControllerButtonEvent.Pressed, inputHandler(ButtonId.Down))
-            controller.left.onEvent(ControllerButtonEvent.Pressed, inputHandler(ButtonId.Left))
+            controller.A.onEvent(ControllerButtonEvent.Pressed, inputHandler(menu.ButtonId.A));
+            controller.B.onEvent(ControllerButtonEvent.Pressed, inputHandler(menu.ButtonId.B));
+            controller.up.onEvent(ControllerButtonEvent.Pressed, inputHandler(menu.ButtonId.Up));
+            controller.right.onEvent(ControllerButtonEvent.Pressed, inputHandler(menu.ButtonId.Right));
+            controller.down.onEvent(ControllerButtonEvent.Pressed, inputHandler(menu.ButtonId.Down));
+            controller.left.onEvent(ControllerButtonEvent.Pressed, inputHandler(menu.ButtonId.Left));
+            controller.menu.onEvent(ControllerButtonEvent.Pressed, inputHandler(menu.ButtonId.Menu));
         }
     }
 
@@ -74,7 +72,6 @@ namespace menu.state {
     export function subscribe(node: menu.animation.Updater) {
         const state = getMenuState();
         if (!state) return;
-        
         state.updatingNodes.push(node);
     }
 
@@ -104,10 +101,12 @@ namespace menu.state {
         log(`focus`)
         const state = getMenuState();
         if (!state) return;
+
         if (state.focus) {
             state.focus.onBlur();
             state.focus = undefined;
         }
+
         if (c) {
             log(`focusing`)
             state.focus = c;
@@ -126,15 +125,15 @@ namespace menu.state {
     export function popFocus() {
         const state = getMenuState();
         if (!state) return;
+
         if (state.focus) {
             state.focus.onBlur();
             state.focus = undefined;
             state.focusStack.pop();
         }
 
-        if (state.focusStack.length) {
+        if (state.focusStack.length)
             focus(state.focusStack.pop());
-        }
     }
 
     export function getMenuState(): menu.state.State {

@@ -1,6 +1,6 @@
-namespace menu {
+namespace menu.node {
     export class VerticalList extends Component {
-        flow: menu.container.VerticalFlow;
+        flow: menu.node.VerticalFlow;
         font: image.Font;
         private items: ListItem[];
 
@@ -10,10 +10,12 @@ namespace menu {
             this.fixedHeight = outerHeight;
             this.font = font;
 
-            if (!innerWidth) innerWidth = outerWidth;
-            if (!innerHeight) innerHeight = outerHeight;
+            if (!innerWidth)
+                innerWidth = outerWidth;
+            if (!innerHeight)
+                innerHeight = outerHeight;
 
-            this.flow = new menu.container.VerticalFlow(innerWidth, innerHeight);
+            this.flow = new menu.node.VerticalFlow(innerWidth, innerHeight);
             this.items = [];
 
             const padding = new JustifiedContent(this.flow, Alignment.Center, Alignment.Center);
@@ -45,11 +47,8 @@ namespace menu {
             for (let i = 0; i < this.items.length; ++i) {
                 const item = this.items[i];
                 const select = value == i;
-                if (select != item.selected) {
+                if (select != item.selected)
                     item.selected = select;
-                    //if (item.selected)
-                    //    focus(item, true);
-                }
             }
         }
 
@@ -65,12 +64,12 @@ namespace menu {
         handleInput(button: ButtonId) {
             log(`list input ${button}`)
             switch (button) {
-                case ButtonId.A:
+                case menu.ButtonId.A:
                     const item = this.selectedItem;
                     if (item && item.handler)
                         item.handler();
                     break;
-                case ButtonId.Down:
+                case menu.ButtonId.Down:
                     for (let i = 0; i < this.items.length - 1; ++i) {
                         const item = this.items[i];
                         if (item.selected) {
@@ -82,7 +81,7 @@ namespace menu {
                         }
                     }
                     break;
-                case ButtonId.Up:
+                case menu.ButtonId.Up:
                     for (let i = 1; i < this.items.length; ++i) {
                         const item = this.items[i];
                         if (item.selected) {

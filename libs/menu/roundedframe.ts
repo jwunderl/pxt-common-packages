@@ -9,24 +9,21 @@ namespace menu.node {
         const result = image.create((radius << 1) + 1, (radius << 1) + 1);
         drawCircle(result, radius, radius, radius, borderColor);
 
-        for (let x = 1; x < result.width - 1; x++) {
+        for (let x = 1; x < result.width - 1; ++x) {
             let s = 0;
-            for (let y = 0; y < result.height; y++) {
+            for (let y = 0; y < result.height; ++y) {
                 if (result.getPixel(x, y)) {
                     if (!s) {
                         s = 1;
-                    }
-                    else if (s === 2) {
+                    } else if (s === 2) {
                         s = 3;
                     }
-                }
-                else if (s === 1) {
+                } else if (s === 1) {
                     s = 2;
                 }
 
-                if (s === 2) {
+                if (s === 2)
                     result.setPixel(x, y, innerFill);
-                }
             }
         }
 
@@ -59,6 +56,7 @@ namespace menu.node {
                 y += 1;
                 err += 2 * y + 1;
             }
+
             if (err > 0) {
                 x -= 1;
                 err -= 2 * x + 1;

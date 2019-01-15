@@ -9,6 +9,7 @@
         "container.ts",
         "frame.ts",
         "justifiedcontent.ts",
+        "label.ts",
         "listitem.ts",
         "menu.ts",
         "node.ts",
