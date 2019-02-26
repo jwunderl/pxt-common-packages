@@ -42,7 +42,7 @@ namespace info {
         _borderColor = screen.isMono ? 1 : 3;
         _fontColor = screen.isMono ? 1 : 3;
         game.eventContext().registerFrameHandler(scene.HUD_PRIORITY, () => {
-            control.enablePerfCounter("info")
+            control.enablePerfCounter("info");
             // show score, lifes
             if (_visibilityFlag & Visibility.Multi) {
                 const ps = _players.filter(p => !!p);
@@ -102,12 +102,12 @@ namespace info {
             `;
         else
             return img`
-        1 . . . 1
-        . 1 . 1 .
-        . . 1 . .
-        . 1 . 1 .
-        1 . . . 1
-        `;
+                1 . . . 1
+                . 1 . 1 .
+                . . 1 . .
+                . 1 . 1 .
+                1 . . . 1
+            `;
     }
 
     function defaultHeartImage() {
@@ -131,30 +131,33 @@ namespace info {
         else
             return screen.isMono ?
                 img`
-        . 1 1 . 1 1 . .
-        1 . . 1 . . 1 .
-        1 . . . . . 1 .
-        1 . . . . . 1 .
-        . 1 . . . 1 . .
-        . . 1 . 1 . . .
-        . . . 1 . . . .
-`         :
+                . 1 1 . 1 1 . .
+                1 . . 1 . . 1 .
+                1 . . . . . 1 .
+                1 . . . . . 1 .
+                . 1 . . . 1 . .
+                . . 1 . 1 . . .
+                . . . 1 . . . .
+            `
+                :
                 img`
-        . c 2 2 . 2 2 .
-        c 2 2 2 2 2 4 2
-        c 2 2 2 2 4 2 2
-        c 2 2 2 2 2 2 2
-        . c 2 2 2 2 2 .
-        . . c 2 2 2 . .
-        . . . c 2 . . .
-        `;
+                . c 2 2 . 2 2 .
+                c 2 2 2 2 2 4 2
+                c 2 2 2 2 4 2 2
+                c 2 2 2 2 2 2 2
+                . c 2 2 2 2 2 .
+                . . c 2 2 2 . .
+                . . . c 2 . . .
+            `;
 
     }
 
     export function saveHighScore() {
         if (_players) {
             let hs = 0;
-            _players.filter(p => p && p.hasScore()).forEach(p => hs = Math.max(hs, p._score));
+            _players
+                .filter(p => p && p.hasScore())
+                .forEach(p => hs = Math.max(hs, p._score));
             updateHighScore(hs);
         }
     }
@@ -418,17 +421,17 @@ namespace info {
             color2 = temp;
         }
 
-        screen.fillRect(left - 3, 0, width + 6, font.charHeight + 3, _borderColor)
-        screen.fillRect(left - 2, 0, width + 4, font.charHeight + 2, color2)
+        screen.fillRect(left - 3, 0, width + 6, font.charHeight + 3, _borderColor);
+        screen.fillRect(left - 2, 0, width + 4, font.charHeight + 2, color2);
 
 
         if (seconds < 60) {
             const top = 1;
             const remainder = Math.idiv(millis % 1000, 10);
 
-            screen.print(formatDecimal(seconds) + ".", left, top, color1, font)
+            screen.print(formatDecimal(seconds) + ".", left, top, color1, font);
             const decimalLeft = left + 3 * font.charWidth;
-            screen.print(formatDecimal(remainder), decimalLeft, top + 2, color1, smallFont)
+            screen.print(formatDecimal(remainder), decimalLeft, top + 2, color1, smallFont);
         }
         else {
             const minutes = Math.idiv(seconds, 60);
@@ -578,7 +581,6 @@ namespace info {
         setLife(value: number): void {
             this.init();
             updateFlag(Visibility.Life, true);
-            const t = this.life();
             this._life = (value | 0);
         }
 
@@ -660,14 +662,32 @@ namespace info {
 
             // Bordered Box
             if (showScore || showLife) {
-                screen.fillRect(x, y, width, height, this.border);
-                screen.fillRect(x + 1, y + 1, width - 2, height - 2, this.bg);
+                screen.fillRect(
+                    x,
+                    y,
+                    width,
+                    height,
+                    this.border
+                );
+                screen.fillRect(
+                    x + 1,
+                    y + 1,
+                    width - 2,
+                    height - 2,
+                    this.bg
+                );
             }
 
             // print score
             if (showScore) {
                 const bump = this.left ? width - scoreWidth : 0;
-                screen.print(score, x + offsetX + bump + 1, y + 2, this.fc, font);
+                screen.print(
+                    score,
+                    x + offsetX + bump + 1,
+                    y + 2,
+                    this.fc,
+                    font
+                );
             }
 
             // print life
@@ -677,17 +697,23 @@ namespace info {
                 let mult = _multiplierImage.clone();
                 mult.replace(1, this.fc);
 
-                screen.drawTransparentImage(_heartImage,
+                screen.drawTransparentImage(
+                    _heartImage,
                     xLoc,
-                    y + offsetY);
-                screen.drawTransparentImage(mult,
+                    y + offsetY
+                );
+                screen.drawTransparentImage(
+                    mult,
                     xLoc + _heartImage.width,
-                    y + offsetY + font.charHeight - _multiplierImage.height - 1);
-                screen.print(life,
+                    y + offsetY + font.charHeight - _multiplierImage.height - 1
+                );
+                screen.print(
+                    life,
                     xLoc + _heartImage.width + _multiplierImage.width + 1,
                     y + offsetY,
                     this.fc,
-                    font);
+                    font
+                );
             }
 
             // print player icon
@@ -705,13 +731,25 @@ namespace info {
                     if (this.up) iconY -= 3;
                 }
 
-                screen.fillRect(iconX, iconY, iconWidth, iconHeight, this.border);
-                screen.print(pNum, iconX + 1, iconY + (iconHeight >> 1) - (font.charHeight >> 1), this.bg, font);
+                screen.fillRect(
+                    iconX,
+                    iconY,
+                    iconWidth,
+                    iconHeight,
+                    this.border
+                );
+                screen.print(
+                    pNum,
+                    iconX + 1,
+                    iconY + (iconHeight >> 1) - (font.charHeight >> 1),
+                    this.bg,
+                    font
+                );
             }
         }
 
         drawScore() {
-            const s = this.score() | 0;
+            const s = this.score();
 
             let font: image.Font;
             let offsetY: number;
@@ -724,36 +762,94 @@ namespace info {
                 font = image.font8;
             }
 
-            const num = s.toString();
+            const num = s + "";
             const width = num.length * font.charWidth;
 
-            screen.fillRect(screen.width - width - 2, 0, screen.width, image.font8.charHeight + 3, _borderColor)
-            screen.fillRect(screen.width - width - 1, 0, screen.width, image.font8.charHeight + 2, _bgColor)
-            screen.print(num, screen.width - width, offsetY, _fontColor, font);
+            screen.fillRect(
+                screen.width - width - 2, 0,
+                screen.width,
+                image.font8.charHeight + 3,
+                _borderColor
+            );
+            screen.fillRect(
+                screen.width - width - 1, 0,
+                screen.width,
+                image.font8.charHeight + 2,
+                _bgColor
+            );
+            screen.print(
+                num,
+                screen.width - width,
+                offsetY,
+                _fontColor,
+                font
+            );
         }
 
         drawLives() {
             if (this._life < 0) return;
             const font = image.font8;
             if (this._life <= 4) {
-                screen.fillRect(0, 0, this._life * (_heartImage.width + 1) + 3, _heartImage.height + 4, _borderColor);
-                screen.fillRect(0, 0, this._life * (_heartImage.width + 1) + 2, _heartImage.height + 3, _bgColor);
+                screen.fillRect(
+                    0,
+                    0,
+                    this._life * (_heartImage.width + 1) + 3,
+                    _heartImage.height + 4,
+                    _borderColor
+                );
+                screen.fillRect(
+                    0,
+                    0,
+                    this._life * (_heartImage.width + 1) + 2,
+                    _heartImage.height + 3,
+                    _bgColor
+                );
                 for (let i = 0; i < this._life; i++) {
-                    screen.drawTransparentImage(_heartImage, 1 + i * (_heartImage.width + 1), 1);
+                    screen.drawTransparentImage(
+                        _heartImage,
+                        1 + i * (_heartImage.width + 1),
+                        1
+                    );
                 }
             }
             else {
-                const num = this._life.toString();
+                const num = this._life + "";
                 const textWidth = num.length * font.charWidth - 1;
-                screen.fillRect(0, 0, _heartImage.width + _multiplierImage.width + textWidth + 5, _heartImage.height + 4, _borderColor)
-                screen.fillRect(0, 0, _heartImage.width + _multiplierImage.width + textWidth + 4, _heartImage.height + 3, _bgColor)
-                screen.drawTransparentImage(_heartImage, 1, 1);
+                screen.fillRect(
+                    0,
+                    0,
+                    _heartImage.width + _multiplierImage.width + textWidth + 5,
+                    _heartImage.height + 4,
+                    _borderColor
+                );
+                screen.fillRect(
+                    0,
+                    0,
+                    _heartImage.width + _multiplierImage.width + textWidth + 4,
+                    _heartImage.height + 3,
+                    _bgColor
+                );
+                screen.drawTransparentImage(
+                    _heartImage,
+                    1,
+                    1
+                );
 
                 let mult = _multiplierImage.clone();
                 mult.replace(1, _fontColor);
 
-                screen.drawTransparentImage(mult, _heartImage.width + 2, font.charHeight - _multiplierImage.height - 1);
-                screen.print(num, _heartImage.width + 3 + _multiplierImage.width, 1, _fontColor, font);
+                screen.drawTransparentImage(
+                    mult,
+                    _heartImage.width + 2,
+                    font.charHeight - _multiplierImage.height - 1
+                );
+                screen.print(
+                    num,
+                    _heartImage.width + 3 + _multiplierImage.width,
+                    1,
+                    _fontColor,
+                    font
+                );
             }
         }
 
@@ -764,7 +860,7 @@ namespace info {
         if (val < 10) {
             return "0" + val;
         }
-        return val.toString();
+        return val + "";
     }
 
     //% fixedInstance whenUsed block="player 2"
