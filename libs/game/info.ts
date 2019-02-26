@@ -421,22 +421,51 @@ namespace info {
             color2 = temp;
         }
 
-        screen.fillRect(left - 3, 0, width + 6, font.charHeight + 3, _borderColor);
-        screen.fillRect(left - 2, 0, width + 4, font.charHeight + 2, color2);
-
+        screen.fillRect(
+            left - 3,
+            0,
+            width + 6,
+            font.charHeight + 3,
+            _borderColor
+        );
+        screen.fillRect(
+            left - 2,
+            0,
+            width + 4,
+            font.charHeight + 2,
+            color2
+        );
 
         if (seconds < 60) {
             const top = 1;
             const remainder = Math.idiv(millis % 1000, 10);
 
-            screen.print(formatDecimal(seconds) + ".", left, top, color1, font);
+            screen.print(
+                formatDecimal(seconds) + ".",
+                left,
+                top,
+                color1,
+                font
+            );
             const decimalLeft = left + 3 * font.charWidth;
-            screen.print(formatDecimal(remainder), decimalLeft, top + 2, color1, smallFont);
+            screen.print(
+                formatDecimal(remainder),
+                decimalLeft,
+                top + 2,
+                color1,
+                smallFont
+            );
         }
         else {
             const minutes = Math.idiv(seconds, 60);
             const remainder = seconds % 60;
-            screen.print(formatDecimal(minutes) + ":" + formatDecimal(remainder), left, 1, color1, font);
+            screen.print(
+                formatDecimal(minutes) + ":" + formatDecimal(remainder),
+                left,
+                1,
+                color1,
+                font
+            );
         }
     }
 
