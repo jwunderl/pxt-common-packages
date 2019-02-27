@@ -1,8 +1,7 @@
 
 /**
  * Head-up display
- *
-*/
+ */
 //% color=#AA5585 weight=80 icon="\uf2bb" blockGap=8
 //% groups='["Score", "Life", "Countdown", "Multiplayer"]'
 //% blockGap=8
@@ -19,35 +18,58 @@ namespace info {
 
     export class InfoContext {
         players: PlayerInfo[];
-        visibility: Visibility;
+        visibility: number; // todo: make this type Visibility https://github.com/Microsoft/pxt-arcade/issues/774
         countdown: number;
-        countdownEndHandler: () => void
+        countdownEndHandler: () => void;
+
+        private scene: scene.Scene;
 
         constructor() {
+            this.scene = game.currentScene();
             this.players = [];
+            this.visibility = Visibility.Hud;
+            this.countdown = undefined;
+        }
+
+        isActive() {
+            return this.scene === game.currentScene();
         }
     }
+
+    let contextStack: InfoContext[];
     let infoContext: InfoContext;
 
-    let _visibilityFlag: number = Visibility.None;
+    game.addScenePushHandler(() => {
+        if (infoContext) {
+            if (!contextStack) {
+                contextStack = [];
+            }
 
-    let _gameEnd: number = undefined;
+            contextStack.push(infoContext);
+            infoContext = undefined;
+        }
+    });
+
+    game.addScenePopHandler(() => {
+        if (contextStack && contextStack.length && contextStack[contextStack.length - 1].isActive()) {
+            infoContext = contextStack.pop();
+        } else {
+            infoContext = undefined;
+        }
+    });
+
     let _heartImage: Image;
     let _multiplierImage: Image;
     let _bgColor: number;
     let _borderColor: number;
     let _fontColor: number;
-    let _countdownExpired: boolean;
 
     let _countdownEndHandler: () => void;
 
     function initHUD() {
-        // if (_visibilityFlag & (Visibility.Hud | Visibility.Multi)) return;
-
         if (infoContext) return;
         infoContext = new InfoContext();
 
-        _visibilityFlag |= Visibility.Hud;
         // non of these images should have been set
         _heartImage = defaultHeartImage();
         _multiplierImage = defaultMultiplyImage();
@@ -57,7 +79,7 @@ namespace info {
         game.eventContext().registerFrameHandler(scene.HUD_PRIORITY, () => {
             control.enablePerfCounter("info");
             // show score, lifes
-            if (_visibilityFlag & Visibility.Multi) {
+            if (infoContext.visibility & Visibility.Multi) {
                 const ps = infoContext.players.filter(p => !!p);
 
                 // First draw players
@@ -67,31 +89,28 @@ namespace info {
             } else { // single player
                 // show score
                 const p = player1;
-                if (p.hasScore() && (_visibilityFlag & Visibility.Score)) {
+                if (p.hasScore() && (infoContext.visibility & Visibility.Score)) {
                     p.drawScore();
                 }
                 // show life
-                if (p.hasLife() && (_visibilityFlag & Visibility.Life)) {
+                if (p.hasLife() && (infoContext.visibility & Visibility.Life)) {
                     p.drawLives();
                 }
                 p.raiseLifeZero(true);
             }
+
             // show countdown in both modes
-            if (_gameEnd !== undefined && _visibilityFlag & Visibility.Countdown) {
+            if (infoContext.countdown !== undefined && infoContext.visibility & Visibility.Countdown) {
                 const scene = game.currentScene();
-                const elapsed = _gameEnd - scene.millis();
+                const elapsed = infoContext.countdown - scene.millis();
                 drawTimer(elapsed);
-                let t = elapsed / 1000;
-                if (t <= 0) {
-                    t = 0;
-                    if (!_countdownExpired) {
-                        _countdownExpired = true;
-                        if (_countdownEndHandler) {
-                            _countdownEndHandler();
-                        }
-                        else {
-                            game.over();
-                        }
+
+                if (elapsed <= 0) {
+                    infoContext.countdown = undefined;
+                    if (_countdownEndHandler) {
+                        _countdownEndHandler();
+                    } else {
+                        game.over();
                     }
                 }
             }
@@ -99,16 +118,16 @@ namespace info {
     }
 
     function initMultiHUD() {
-        if (_visibilityFlag & Visibility.Multi) return;
+        if (infoContext.visibility & Visibility.Multi) return;
 
-        _visibilityFlag |= Visibility.Multi;
-        if (!_heartImage || !(_visibilityFlag & Visibility.UserHeartImage))
+        infoContext.visibility |= Visibility.Multi;
+        if (!_heartImage || !(infoContext.visibility & Visibility.UserHeartImage))
             _heartImage = defaultHeartImage();
         _multiplierImage = defaultMultiplyImage();
     }
 
     function defaultMultiplyImage() {
-        if (_visibilityFlag & Visibility.Multi)
+        if (infoContext.visibility & Visibility.Multi)
             return img`
                 1 . 1
                 . 1 .
@@ -125,7 +144,7 @@ namespace info {
     }
 
     function defaultHeartImage() {
-        if (_visibilityFlag & Visibility.Multi)
+        if (infoContext.visibility & Visibility.Multi)
             return screen.isMono ?
                 img`
                 . . 1 . 1 . .
@@ -277,7 +296,7 @@ namespace info {
     export function onLifeZero(handler: () => void) {
         player1.onLifeZero(handler);
     }
-    
+
     /**
      * Get the current countdown duration
      */
@@ -285,7 +304,7 @@ namespace info {
     //% blockId=hudCountdown block="countdown (ms)"
     //% group="Countdown"
     export function countdown() {
-        return _gameEnd !== undefined ? _gameEnd - game.currentScene().millis() : 0;
+        return infoContext.countdown !== undefined ? infoContext.countdown - game.currentScene().millis() : 0;
     }
 
     /**
@@ -296,10 +315,8 @@ namespace info {
     //% help=info/start-countdown weight=79 blockGap=8
     //% group="Countdown"
     export function startCountdown(duration: number) {
-        _gameEnd = game.currentScene().millis() + duration;
-        initHUD();
         updateFlag(Visibility.Countdown, true);
-        _countdownExpired = false;
+        infoContext.countdown = game.currentScene().millis() + duration;
     }
 
     /**
@@ -320,9 +337,8 @@ namespace info {
     //% help=info/stop-countdown
     //% group="Countdown"
     export function stopCountdown() {
-        _gameEnd = undefined;
         updateFlag(Visibility.Countdown, false);
-        _countdownExpired = true;
+        infoContext.countdown = undefined;
     }
 
     /**
@@ -376,9 +392,9 @@ namespace info {
     }
 
     function updateFlag(flag: Visibility, on: boolean) {
-        if (on) _visibilityFlag |= flag;
-        else _visibilityFlag = ~(~_visibilityFlag | flag);
         initHUD();
+        if (on) infoContext.visibility |= flag;
+        else infoContext.visibility = ~(~(infoContext.visibility as number) | flag);
     }
 
     /**
