@@ -100,10 +100,10 @@ namespace info {
             // show countdown in both modes
             if (infoContext.countdown !== undefined && infoContext.visibility & Visibility.Countdown) {
                 const scene = game.currentScene();
-                const elapsed = infoContext.countdown - scene.millis();
-                drawTimer(elapsed);
+                const remaining = infoContext.countdown - scene.millis();
+                drawTimer(remaining);
 
-                if (elapsed <= 0) {
+                if (remaining <= 0) {
                     infoContext.countdown = undefined;
                     if (infoContext.countdownEndHandler) {
                         infoContext.countdownEndHandler();
