@@ -64,8 +64,6 @@ namespace info {
     let _borderColor: number;
     let _fontColor: number;
 
-    let _countdownEndHandler: () => void;
-
     function initHUD() {
         if (infoContext) return;
         infoContext = new InfoContext();
@@ -107,8 +105,8 @@ namespace info {
 
                 if (elapsed <= 0) {
                     infoContext.countdown = undefined;
-                    if (_countdownEndHandler) {
-                        _countdownEndHandler();
+                    if (infoContext.countdownEndHandler) {
+                        infoContext.countdownEndHandler();
                     } else {
                         game.over();
                     }
@@ -350,7 +348,7 @@ namespace info {
     //% group="Countdown"
     export function onCountdownEnd(handler: () => void) {
         initHUD();
-        _countdownEndHandler = handler;
+        infoContext.countdownEndHandler = handler;
     }
 
     /**
