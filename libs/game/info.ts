@@ -7,7 +7,6 @@
 //% groups='["Score", "Life", "Countdown", "Multiplayer"]'
 //% blockGap=8
 namespace info {
-
     enum Visibility {
         None = 0,
         Countdown = 1 << 0,
@@ -18,7 +17,18 @@ namespace info {
         UserHeartImage = 1 << 5
     }
 
-    let _players: PlayerInfo[];
+    export class InfoContext {
+        players: PlayerInfo[];
+        visibility: Visibility;
+        countdown: number;
+        countdownEndHandler: () => void
+
+        constructor() {
+            this.players = [];
+        }
+    }
+    let infoContext: InfoContext;
+
     let _visibilityFlag: number = Visibility.None;
 
     let _gameEnd: number = undefined;
@@ -32,7 +42,10 @@ namespace info {
     let _countdownEndHandler: () => void;
 
     function initHUD() {
-        if (_visibilityFlag & (Visibility.Hud | Visibility.Multi)) return;
+        // if (_visibilityFlag & (Visibility.Hud | Visibility.Multi)) return;
+
+        if (infoContext) return;
+        infoContext = new InfoContext();
 
         _visibilityFlag |= Visibility.Hud;
         // non of these images should have been set
@@ -45,7 +58,8 @@ namespace info {
             control.enablePerfCounter("info");
             // show score, lifes
             if (_visibilityFlag & Visibility.Multi) {
-                const ps = _players.filter(p => !!p);
+                const ps = infoContext.players.filter(p => !!p);
+
                 // First draw players
                 ps.forEach(p => p.drawPlayer());
                 // Then run life over events
@@ -153,13 +167,12 @@ namespace info {
     }
 
     export function saveHighScore() {
-        if (_players) {
-            let hs = 0;
-            _players
-                .filter(p => p && p.hasScore())
-                .forEach(p => hs = Math.max(hs, p._score));
-            updateHighScore(hs);
-        }
+        let hs = 0;
+        infoContext
+            .players
+            .filter(p => p && p.hasScore())
+            .forEach(p => hs = Math.max(hs, p._score));
+        updateHighScore(hs);
     }
 
     /**
@@ -264,18 +277,40 @@ namespace info {
     export function onLifeZero(handler: () => void) {
         player1.onLifeZero(handler);
     }
+    
+    /**
+     * Get the current countdown duration
+     */
+    //% weight=80 blockGap=8
+    //% blockId=hudCountdown block="countdown (ms)"
+    //% group="Countdown"
+    export function countdown() {
+        return _gameEnd !== undefined ? _gameEnd - game.currentScene().millis() : 0;
+    }
 
     /**
      * Start a countdown of the given duration in seconds
-     * @param duration the duration of the countdown, eg: 10
+     * @param duration the duration of the countdown, eg: 10000
      */
-    //% blockId=gamecountdown block="start countdown %duration (s)"
+    //% blockId=gamecountdown block="start countdown %duration=countdownPicker ms"
     //% help=info/start-countdown weight=79 blockGap=8
     //% group="Countdown"
     export function startCountdown(duration: number) {
-        _gameEnd = game.currentScene().millis() + duration * 1000;
+        _gameEnd = game.currentScene().millis() + duration;
+        initHUD();
         updateFlag(Visibility.Countdown, true);
         _countdownExpired = false;
+    }
+
+    /**
+     * Change the current countdown by the given number of seconds
+     * @param duration the change of the countdown, eg: 5000
+     */
+    //% blockId=gamechangecountdownby block="change countdown by %duration=countdownPicker ms"
+    //% weight=78 blockGap=8
+    //% group="Countdown"
+    export function changeCountdownBy(duration: number) {
+        startCountdown(countdown() + duration)
     }
 
     /**
@@ -525,10 +560,8 @@ namespace info {
                 this.up = true;
             }
 
-            // init hud
-            if (!_players)
-                _players = [];
-            _players[this._player - 1] = this;
+            this.init();
+            infoContext.players[this._player - 1] = this;
         }
 
         private init() {
@@ -562,9 +595,7 @@ namespace info {
         //% value.defl=0
         //% help=info/set-score
         setScore(value: number) {
-            this.init();
             updateFlag(Visibility.Score, true);
-            const t = this.score();
             this._score = (value | 0);
         }
 
@@ -591,8 +622,10 @@ namespace info {
         //% blockid=piflife block="%player life"
         //% help=info/life
         life(): number {
-            if (this.showLife === null) this.showLife = true;
-            if (this.showPlayer === null) this.showPlayer = true;
+            if (this.showLife === null)
+                this.showLife = true;
+            if (this.showPlayer === null)
+                this.showPlayer = true;
 
             if (this._life === null) {
                 this._life = 3;
@@ -608,7 +641,6 @@ namespace info {
         //% value.defl=3
         //% help=info/set-life
         setLife(value: number): void {
-            this.init();
             updateFlag(Visibility.Life, true);
             this._life = (value | 0);
         }
@@ -881,7 +913,6 @@ namespace info {
                 );
             }
         }
-
     }
 
     function formatDecimal(val: number) {
@@ -900,6 +931,19 @@ namespace info {
     export const player4 = new PlayerInfo(4);
     //% fixedInstance whenUsed block="player 1"
     export const player1 = new PlayerInfo(1);
+
+    /**
+      * Get the countdown time field editor
+      * @param ms time duration in milliseconds, eg: 5000, 10000
+      */
+    //% blockId=countdownPicker block="%ms"
+    //% blockHidden=true shim=TD_ID
+    //% colorSecondary="#FFFFFF"
+    //% ms.fieldEditor="numberdropdown" ms.fieldOptions.decompileLiterals=true
+    //% ms.fieldOptions.data='[["500 ms", 500],["5 seconds", 5000], ["10 seconds", 10000], ["20 seconds", 20000], ["30 seconds", 30000]]'
+    export function __countdownTimePicker(ms: number): number {
+        return ms;
+    }
 }
 
 declare namespace info {
