@@ -34,13 +34,14 @@ namespace info {
     // }
 
     interface PlayerState {
-        score: number,
-        lives: number,
-        visibility: number
+        visibility: number;
+        score: number;
+        lives: number;
+        lifeZeroHandler: () => void;
     }
 
     export class InfoContext {
-        players: PlayerInfo[];
+        players: PlayerState[]; // TODO: store score and visibility from PlayerInfo's here
         visibility: number; // TODO: make this type Visibility pending https://github.com/Microsoft/pxt-arcade/issues/774
         countdown: number;
         countdownEndHandler: () => void;
@@ -49,8 +50,6 @@ namespace info {
 
         constructor() {
             this.scene = game.currentScene();
-
-            this.players = [];
             this.visibility = Visibility.Hud;
             this.countdown = undefined;
         }
@@ -60,6 +59,7 @@ namespace info {
         }
     }
 
+    let players: PlayerInfo[] = [];
     let contextStack: InfoContext[];
     let infoContext: InfoContext;
 
@@ -122,23 +122,14 @@ namespace info {
         }
 
         function showScoreAndLives() {
-            if (infoContext.visibility & Visibility.Multi) { // multiplayer
-                const ps = infoContext.players.filter(p => !!p);
-                // First draw players
+            if (infoContext.visibility & Visibility.Multi) {
+                const ps = players.filter(p => !!p);
                 ps.forEach(p => p.drawPlayer());
-                // Then run life over events
                 ps.forEach(p => p.raiseLifeZero(false));
-            } else { // single player
-                // show score
-                const p = player1;
-                if (p.hasScore() && (infoContext.visibility & Visibility.Score)) {
-                    p.drawScore();
-                }
-                // show life
-                if (p.hasLife() && (infoContext.visibility & Visibility.Life)) {
-                    p.drawLives();
-                }
-                p.raiseLifeZero(true);
+            } else {
+                player1.drawScore();
+                player1.drawLives();
+                player1.raiseLifeZero(true);
             }
         }
     }
@@ -213,8 +204,7 @@ namespace info {
 
     export function saveHighScore() {
         let hs = 0;
-        infoContext
-            .players
+        players
             .filter(p => p && p.hasScore())
             .forEach(p => hs = Math.max(hs, p._score));
         updateHighScore(hs);
@@ -224,14 +214,14 @@ namespace info {
      * Get the current score if any
      */
     //% weight=95 blockGap=8
-    //% blockId=hudScore block="score"
+    //% blockId=hudScore block="score || %player"
     //% help=info/score
     //% group="Score"
-    export function score() {
-        return player1.score();
+    export function score(player?: PlayerInfo) {
+        player = player ? player : player1;
+        return player.score();
     }
 
-    //%
     //% group="Score"
     export function hasScore() {
         return player1.hasScore();
@@ -324,7 +314,7 @@ namespace info {
     }
 
     /**
-     * Get the current countdown duration
+     * Get the current countdown duration in milliseconds
      */
     //% weight=80 blockGap=8
     //% blockId=hudCountdown block="countdown"
@@ -334,8 +324,8 @@ namespace info {
     }
 
     /**
-     * Start a countdown of the given duration in seconds
-     * @param duration the duration of the countdown, eg: 10000
+     * Start a countdown of the given duration in milliseconds
+     * @param duration the duration of the countdown in ms, eg: 10000
      */
     //% blockId=gamecountdown block="start countdown %duration=countdownPicker ms"
     //% help=info/start-countdown weight=79 blockGap=8
@@ -346,8 +336,8 @@ namespace info {
     }
 
     /**
-     * Change the current countdown by the given number of seconds
-     * @param duration the change of the countdown, eg: 5000
+     * Change the current countdown by the given number of milliseconds
+     * @param duration the change of the countdown in ms, eg: 5000
      */
     //% blockId=gamechangecountdownby block="change countdown by %duration=countdownPicker ms"
     //% weight=78 blockGap=8
@@ -558,11 +548,12 @@ namespace info {
         showScore?: boolean;
         showLife?: boolean;
         showPlayer?: boolean;
-        private _lifeZeroHandler?: () => void; // onPlayerLifeOver handler
         x?: number;
         y?: number;
         left?: boolean; // if true banner goes from x to the left, else goes rightward
         up?: boolean; // if true banner goes from y up, else goes downward
+
+        private _lifeZeroHandler?: () => void; // onPlayerLifeOver handler
 
         constructor(player: number) {
             this._player = player;
@@ -602,14 +593,10 @@ namespace info {
                 this.up = true;
             }
 
-            this.init();
-            infoContext.players[this._player - 1] = this;
-        }
-
-        private init() {
             initHUD();
             if (this._player > 1)
                 initMultiHUD();
+            players[this._player - 1] = this;
         }
 
         /**
@@ -799,7 +786,7 @@ namespace info {
             if (showLife) {
                 const xLoc = x + offsetX + (this.left ? width - lifeWidth : 0);
 
-                let mult = _multiplierImage.clone();
+                const mult = _multiplierImage.clone();
                 mult.replace(1, this.fc);
 
                 screen.drawTransparentImage(
@@ -825,7 +812,7 @@ namespace info {
             if (this.showPlayer) {
                 const pNum = "" + this._player;
 
-                let iconWidth = pNum.length * font.charWidth + 1;
+                const iconWidth = pNum.length * font.charWidth + 1;
                 const iconHeight = Math.max(height, font.charHeight + 2);
                 let iconX = this.left ? (x - iconWidth + 1) : (x + width - 1);
                 let iconY = y;
@@ -854,6 +841,8 @@ namespace info {
         }
 
         drawScore() {
+            if (!this.hasScore() || !(infoContext.visibility & Visibility.Score))
+                return
             const s = this.score();
 
             let font: image.Font;
@@ -892,7 +881,9 @@ namespace info {
         }
 
         drawLives() {
-            if (this._life < 0) return;
+            if (!this.hasLife() || this._life < 0 || !(infoContext.visibility & Visibility.Life))
+                return
+
             const font = image.font8;
             if (this._life <= 4) {
                 screen.fillRect(
@@ -966,14 +957,14 @@ namespace info {
         return val + "";
     }
 
+    //% fixedInstance whenUsed block="player 1"
+    export const player1 = new PlayerInfo(1);
     //% fixedInstance whenUsed block="player 2"
     export const player2 = new PlayerInfo(2);
     //% fixedInstance whenUsed block="player 3"
     export const player3 = new PlayerInfo(3);
     //% fixedInstance whenUsed block="player 4"
     export const player4 = new PlayerInfo(4);
-    //% fixedInstance whenUsed block="player 1"
-    export const player1 = new PlayerInfo(1);
 
     /**
       * Get the countdown time field editor
