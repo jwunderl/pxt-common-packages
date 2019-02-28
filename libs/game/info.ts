@@ -215,12 +215,11 @@ namespace info {
      * @param player [optional] the player to get the score of
      */
     //% weight=95 blockGap=8
-    //% blockId=hudScore block="score || %player"
+    //% blockId=hudScore block="score"
     //% help=info/score
     //% group="Score"
-    export function score(player?: PlayerInfo) {
-        player = player ? player : player1;
-        return player.score();
+    export function score() {
+        return player1.score();
     }
 
     //% group="Score"
@@ -245,12 +244,11 @@ namespace info {
      * @param player [optional] the player to set the score of
      */
     //% weight=93 blockGap=8
-    //% blockId=hudsetScore block="set score to $value || $player"
+    //% blockId=hudsetScore block="set score to $value"
     //% help=info/set-score
     //% group="Score"
-    export function setScore(value: number, player?: PlayerInfo) {
-        player = player ? player : player1;
-        player.setScore(value);
+    export function setScore(value: number) {
+        player1.setScore(value);
     }
 
     /**
@@ -259,12 +257,11 @@ namespace info {
      * @param player [optional] the player to change the score of
      */
     //% weight=92
-    //% blockId=hudChangeScoreBy block="change score by $value || $player"
+    //% blockId=hudChangeScoreBy block="change score by $value"
     //% help=info/change-score-by
     //% group="Score"
-    export function changeScoreBy(value: number, player?: PlayerInfo) {
-        player = player ? player : player1;
-        player.changeScoreBy(value);
+    export function changeScoreBy(value: number) {
+        player1.changeScoreBy(value);
     }
 
     /**
@@ -272,12 +269,11 @@ namespace info {
      * @param player [optional] the player to get the number of lives of
      */
     //% weight=85 blockGap=8
-    //% blockId=hudLife block="life || $player"
+    //% blockId=hudLife block="life"
     //% help=info/life
     //% group="Life"
-    export function life(player?: PlayerInfo) {
-        player = player ? player : player1;
-        return player.life();
+    export function life() {
+        return player1.life();
     }
 
     //% group="Life"
@@ -291,12 +287,11 @@ namespace info {
      * @param player [optional] the player to set the life of
      */
     //% weight=84 blockGap=8
-    //% blockId=hudSetLife block="set life to $value || $player"
+    //% blockId=hudSetLife block="set life to $value"
     //% help=info/set-life
     //% group="Life"
-    export function setLife(value: number, player?: PlayerInfo) {
-        player = player ? player : player1;
-        player.setLife(value);
+    export function setLife(value: number) {
+        player1.setLife(value);
     }
 
     /**
@@ -305,12 +300,11 @@ namespace info {
      * @param player [optional] the player to change the life of
      */
     //% weight=83
-    //% blockId=hudChangeLifeBy block="change life by %value || $player"
+    //% blockId=hudChangeLifeBy block="change life by %value"
     //% help=info/change-life-by
     //% group="Life"
-    export function changeLifeBy(value: number, player?: PlayerInfo) {
-        player = player ? player : player1;
-        player.changeLifeBy(value);
+    export function changeLifeBy(value: number) {
+        player1.changeLifeBy(value);
     }
 
     /**
@@ -628,6 +622,9 @@ namespace info {
         /**
          * Get the player score
          */
+        //% group="Multiplayer"
+        //% blockId=piscore block="%player score"
+        //% help=info/score
         score(): number {
             this.initScore();
 
@@ -641,6 +638,10 @@ namespace info {
         /**
          * Set the player score
          */
+        //% group="Multiplayer"
+        //% blockId=pisetscore block="set %player score to %value"
+        //% value.defl=0
+        //% help=info/set-score
         setScore(value: number) {
             this.initScore();
             updateFlag(Visibility.Score, true);
@@ -651,6 +652,10 @@ namespace info {
          * Change the score of a player
          * @param value 
          */
+        //% group="Multiplayer"
+        //% blockId=pichangescore block="change %player score by %value"
+        //% value.defl=1
+        //% help=info/change-score-by
         changeScoreBy(value: number): void {
             this.initScore();
             this.setScore(this.score() + value);
@@ -663,6 +668,9 @@ namespace info {
         /**
          * Get the player life
          */
+        //% group="Multiplayer"
+        //% blockid=piflife block="%player life"
+        //% help=info/life
         life(): number {
             this.initLife();
 
@@ -675,6 +683,10 @@ namespace info {
         /**
          * Set the player life
          */
+        //% group="Multiplayer"
+        //% blockId=pisetlife block="set %player life to %value"
+        //% value.defl=3
+        //% help=info/set-life
         setLife(value: number): void {
             this.initLife();
             updateFlag(Visibility.Life, true);
@@ -685,6 +697,10 @@ namespace info {
          * Change the life of a player
          * @param value 
          */
+        //% group="Multiplayer"
+        //% blockId=pichangelife block="change %player life by %value"
+        //% value.defl=-1
+        //% help=info/change-life-by
         changeLifeBy(value: number): void {
             this.initLife();
             this.setLife(this.life() + value);
@@ -695,6 +711,9 @@ namespace info {
          * and false otherwise.
          * @param player player to check life of
          */
+        //% group="Multiplayer"
+        //% blockId=pihaslife block="%player has life"
+        //% help=info/has-life
         hasLife(): boolean {
             return this._life !== null;
         }
