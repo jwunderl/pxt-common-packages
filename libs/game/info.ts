@@ -611,14 +611,25 @@ namespace info {
             players[this._player - 1] = this;
         }
 
-        /**
-         * Get the player score
-         */
-        score(): number {
+        private initScore() {
             if (this.showScore === null)
                 this.showScore = true;
             if (this.showPlayer === null)
                 this.showPlayer = true;
+        }
+
+        private initLife() {
+            if (this.showLife === null)
+                this.showLife = true;
+            if (this.showPlayer === null)
+                this.showPlayer = true;
+        }
+
+        /**
+         * Get the player score
+         */
+        score(): number {
+            this.initScore();
 
             if (!this._score) {
                 this._score = 0;
@@ -631,6 +642,7 @@ namespace info {
          * Set the player score
          */
         setScore(value: number) {
+            this.initScore();
             updateFlag(Visibility.Score, true);
             this._score = (value | 0);
         }
@@ -640,6 +652,7 @@ namespace info {
          * @param value 
          */
         changeScoreBy(value: number): void {
+            this.initScore();
             this.setScore(this.score() + value);
         }
 
@@ -651,10 +664,7 @@ namespace info {
          * Get the player life
          */
         life(): number {
-            if (this.showLife === null)
-                this.showLife = true;
-            if (this.showPlayer === null)
-                this.showPlayer = true;
+            this.initLife();
 
             if (this._life === null) {
                 this._life = 3;
@@ -666,6 +676,7 @@ namespace info {
          * Set the player life
          */
         setLife(value: number): void {
+            this.initLife();
             updateFlag(Visibility.Life, true);
             this._life = (value | 0);
         }
@@ -675,6 +686,7 @@ namespace info {
          * @param value 
          */
         changeLifeBy(value: number): void {
+            this.initLife();
             this.setLife(this.life() + value);
         }
 
