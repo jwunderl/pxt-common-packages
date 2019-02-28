@@ -16,9 +16,32 @@ namespace info {
         UserHeartImage = 1 << 5
     }
 
+    // TODO: split into HudVisibility (on InfoContext)
+    //          and PlayerVisibility (on players)
+    // enum HudVisibility {
+    //     None = 0,
+    //     Countdown = 1 << 0,
+    //     Hud = 1 << 1,
+    //     Multi = 1 << 2,
+    //     UserHeartImage = 1 << 2
+    // }
+
+    // enum PlayerVisibility {
+    //     None = 0,
+    //     Score = 1 << 0,
+    //     Life = 1 << 1,
+    //     Icon = 1 << 2
+    // }
+
+    interface PlayerState {
+        score: number,
+        lives: number,
+        visibility: number
+    }
+
     export class InfoContext {
         players: PlayerInfo[];
-        visibility: number; // todo: make this type Visibility https://github.com/Microsoft/pxt-arcade/issues/774
+        visibility: number; // TODO: make this type Visibility pending https://github.com/Microsoft/pxt-arcade/issues/774
         countdown: number;
         countdownEndHandler: () => void;
 
@@ -26,6 +49,7 @@ namespace info {
 
         constructor() {
             this.scene = game.currentScene();
+
             this.players = [];
             this.visibility = Visibility.Hud;
             this.countdown = undefined;
@@ -74,12 +98,32 @@ namespace info {
         _bgColor = screen.isMono ? 0 : 1;
         _borderColor = screen.isMono ? 1 : 3;
         _fontColor = screen.isMono ? 1 : 3;
+
         game.eventContext().registerFrameHandler(scene.HUD_PRIORITY, () => {
             control.enablePerfCounter("info");
-            // show score, lifes
-            if (infoContext.visibility & Visibility.Multi) {
-                const ps = infoContext.players.filter(p => !!p);
+            showScoreAndLives();
+            showCountdown();
+        });
 
+        function showCountdown() {
+            if (infoContext.countdown !== undefined && infoContext.visibility & Visibility.Countdown) {
+                const scene = game.currentScene();
+                const remaining = infoContext.countdown - scene.millis();
+                drawTimer(remaining);
+                if (remaining <= 0) {
+                    infoContext.countdown = undefined;
+                    if (infoContext.countdownEndHandler) {
+                        infoContext.countdownEndHandler();
+                    } else {
+                        game.over();
+                    }
+                }
+            }
+        }
+
+        function showScoreAndLives() {
+            if (infoContext.visibility & Visibility.Multi) { // multiplayer
+                const ps = infoContext.players.filter(p => !!p);
                 // First draw players
                 ps.forEach(p => p.drawPlayer());
                 // Then run life over events
@@ -96,23 +140,7 @@ namespace info {
                 }
                 p.raiseLifeZero(true);
             }
-
-            // show countdown in both modes
-            if (infoContext.countdown !== undefined && infoContext.visibility & Visibility.Countdown) {
-                const scene = game.currentScene();
-                const remaining = infoContext.countdown - scene.millis();
-                drawTimer(remaining);
-
-                if (remaining <= 0) {
-                    infoContext.countdown = undefined;
-                    if (infoContext.countdownEndHandler) {
-                        infoContext.countdownEndHandler();
-                    } else {
-                        game.over();
-                    }
-                }
-            }
-        })
+        }
     }
 
     function initMultiHUD() {
@@ -299,7 +327,7 @@ namespace info {
      * Get the current countdown duration
      */
     //% weight=80 blockGap=8
-    //% blockId=hudCountdown block="countdown (ms)"
+    //% blockId=hudCountdown block="countdown"
     //% group="Countdown"
     export function countdown() {
         return infoContext.countdown !== undefined ? infoContext.countdown - game.currentScene().millis() : 0;
@@ -325,7 +353,7 @@ namespace info {
     //% weight=78 blockGap=8
     //% group="Countdown"
     export function changeCountdownBy(duration: number) {
-        startCountdown(countdown() + duration)
+        startCountdown(countdown() + duration);
     }
 
     /**
@@ -504,8 +532,7 @@ namespace info {
                 color1,
                 smallFont
             );
-        }
-        else {
+        } else {
             const minutes = Math.idiv(seconds, 60);
             const remainder = seconds % 60;
             screen.print(
@@ -561,12 +588,13 @@ namespace info {
                 this.y = 0;
                 this.left = true;
             } else if (player === 3) {
+                // bottom left, and banner is white on orange
                 this.bg = screen.isMono ? 0 : 4;
                 this.x = 0;
                 this.y = screen.height;
                 this.up = true;
             } else {
-                // bottom left, banner is white on green
+                // bottom right, banner is white on green
                 this.bg = screen.isMono ? 0 : 7;
                 this.x = screen.width;
                 this.y = screen.height;
@@ -591,8 +619,10 @@ namespace info {
         //% blockId=piscore block="%player score"
         //% help=info/score
         score(): number {
-            if (this.showScore === null) this.showScore = true;
-            if (this.showPlayer === null) this.showPlayer = true;
+            if (this.showScore === null)
+                this.showScore = true;
+            if (this.showPlayer === null)
+                this.showPlayer = true;
 
             if (!this._score) {
                 this._score = 0;
@@ -886,8 +916,7 @@ namespace info {
                         1
                     );
                 }
-            }
-            else {
+            } else {
                 const num = this._life + "";
                 const textWidth = num.length * font.charWidth - 1;
                 screen.fillRect(
