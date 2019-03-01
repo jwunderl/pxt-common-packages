@@ -212,7 +212,6 @@ namespace info {
 
     /**
      * Get the current score
-     * @param player [optional] the player to get the score of
      */
     //% weight=95 blockGap=8
     //% blockId=hudScore block="score"
@@ -241,7 +240,6 @@ namespace info {
     /**
      * Set the score
      * @param value the score to set
-     * @param player [optional] the player to set the score of
      */
     //% weight=93 blockGap=8
     //% blockId=hudsetScore block="set score to $value"
@@ -254,7 +252,6 @@ namespace info {
     /**
      * Change the score by the given amount
      * @param value the amount of change, eg: 1
-     * @param player [optional] the player to change the score of
      */
     //% weight=92
     //% blockId=hudChangeScoreBy block="change score by $value"
@@ -266,7 +263,6 @@ namespace info {
 
     /**
      * Get the number of lives
-     * @param player [optional] the player to get the number of lives of
      */
     //% weight=85 blockGap=8
     //% blockId=hudLife block="life"
@@ -284,7 +280,6 @@ namespace info {
     /**
      * Set the number of lives
      * @param value the number of lives, eg: 3
-     * @param player [optional] the player to set the life of
      */
     //% weight=84 blockGap=8
     //% blockId=hudSetLife block="set life to $value"
@@ -297,7 +292,6 @@ namespace info {
     /**
      * Change the lives by the given amount
      * @param value the change of lives, eg: -1
-     * @param player [optional] the player to change the life of
      */
     //% weight=83
     //% blockId=hudChangeLifeBy block="change life by %value"
@@ -709,7 +703,6 @@ namespace info {
         /**
          * Return true if the given player currently has a value set for health,
          * and false otherwise.
-         * @param player player to check life of
          */
         //% group="Multiplayer"
         //% blockId=pihaslife block="%player has life"
