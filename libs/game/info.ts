@@ -59,7 +59,7 @@ namespace info {
         }
     }
 
-    let players: PlayerInfo[] = [];
+    let players: PlayerInfo[] = []; // this should be bumped to multiplayer.ts
     let contextStack: InfoContext[];
     let infoContext: InfoContext;
 

@@ -200,17 +200,18 @@ namespace controller {
             this._id = control.allocateNotifyEvent();
             this._connected = false;
             this.playerIndex = playerIndex;
-            if (buttons)
+            if (buttons) {
                 this.buttons = buttons;
-            else {
+            } else {
                 this.buttons = [];
                 const leftId = 1 + (this.playerIndex - 1) * 7;
                 for (let i = 0; i < 7; ++i) {
                     this.buttons.push(new Button(leftId + i, -1));
                 }
             }
-            for (let i = 0; i < this.buttons.length; ++i)
+            for (let i = 0; i < this.buttons.length; ++i) {
                 this.buttons[i]._owner = this;
+            }
             addController(this);
         }
 

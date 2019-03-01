@@ -35,12 +35,13 @@
         "particles.ts",
         "particlefactories.ts",
         "particleeffects.ts",
-        "effects.ts"
+        "effects.ts",
+        "multiplayer.ts"
     ],
     "public": true,
     "dependencies": {
         "screen": "file:../screen",
-       "mixer": "file:../mixer",
-       "power": "file:../power"
+        "mixer": "file:../mixer",
+        "power": "file:../power"
     }
 }
