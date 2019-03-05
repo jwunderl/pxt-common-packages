@@ -9,8 +9,18 @@ namespace multiplayer {
             this.id = id;
             if (!players)
                 players = [];
-            players[i - 1] = this;
-            this.controller = new controller.Controller(id, undefined);
+            players[id - 1] = this;
+        }
+
+        private initController() {
+            if (!this.controller) {
+                this.controller = new controller.Controller(this.id, undefined);
+            }
+        }
+
+        private initInfo() {
+            initMultiplayer();
+            currentContext.playerInfo(this.id);
         }
         
     }
@@ -24,23 +34,48 @@ namespace multiplayer {
     //% fixedInstance whenUsed block="player 4"
     export const player4 = new Player(4);
     
-    class PlayerState {
-        // controls (buttons & events) 
-        // info state - score, life, visibility, life over handler
-        // sprites
-    }
+    // class PlayerState {
+    //     info: info.PlayerInfo;
+
+    //     constructor() {
+
+    //     }
+    //     // controls (buttons & events) 
+    //     // info state - score, life, visibility, life over handler
+    //     // sprites
+    // }
 
     class Context {
-        players: PlayerState[];
+        // players: PlayerState[];
+        private playerInfoStore: info.PlayerInfo[];
         private scene: scene.Scene;
 
         constructor() {
             this.scene = game.currentScene();
-            this.players = [];
+            this.playerInfoStore = [];
         }
 
         isActive() {
             return this.scene === game.currentScene();
+        }
+
+        playerInfo(id: number) {
+            if (!this.hasPlayerInfo(id)) {
+                this.playerInfoStore[id - 1] = new info.PlayerInfo(id);
+            }
+            return this.playerInfoStore[id - 1];
+        }
+
+        hasPlayerInfo(id: number) {
+            return !!this.playerInfoStore[id - 1];
+        }
+
+
+    }
+
+    function initMultiplayer() {
+        if (!currentContext) {
+            currentContext = new Context();
         }
     }
 
